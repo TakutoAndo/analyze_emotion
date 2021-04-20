@@ -61,11 +61,9 @@ article_df.head()
 
 #ここから形態素分析
 
-#スポーツ関連の記事に絞る
-news_df = article_df[article_df[0] == 'sports-watch'].reset_index(drop = True)
+#topic-news内記事を分析
+news_df = article_df[article_df[0] == 'topic-news'].reset_index(drop = True)
 #print(news_df)
-
-#TODO: ここから理解してない
 
 from janome.tokenizer import Tokenizer
 from janome.analyzer import Analyzer
@@ -105,4 +103,21 @@ for i in range(len(score_result['ニュースNo.'].unique())):
     result.append([i, text, score, score_r])
 
 final = pd.DataFrame(result, columns= ['ニュースNo.', 'テキスト', '累計スコア', '標準化スコア']).sort_values(by = '標準化スコア').reset_index(drop = True)
-print(final)
+#print(final)
+
+def writeTextFile(file_name, text):
+    f = open(file_name, 'w')
+    f.write(text)
+    f.close()
+
+posi_best = final[final['ニュースNo.'] == 510]
+nega_best = final[final['ニュースNo.'] == 57]
+pd.set_option("display.max_colwidth", 1000)
+posi_best = str(posi_best['テキスト'])
+nega_best = str(nega_best['テキスト'])
+writeTextFile('nega_best.txt', nega_best)
+writeTextFile('posi_best.txt', posi_best)
+df_sample1 = posi_nega_df.head(20)
+df_sample2 = posi_nega_df.tail(20)
+df_sample = df_sample1.append(df_sample2)
+writeTextFile('posi_nega_df.txt', str(df_sample))
